@@ -1,0 +1,5 @@
+"0",""
+"0","data_folder <- ""~/UMD/JOUR_628/hipaa_app/Data/0_Raw/"""
+"0",""
+"0","write_csv(breach_latest_import, paste0(data_folder,""breaches_disclosed_"",today(),"".csv""))"
+"0",""

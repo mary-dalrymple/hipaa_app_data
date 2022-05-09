@@ -1,0 +1,4 @@
+"0","# This marks TRUE starting with the second instance (or first repeat offense) of a Covered Entity."
+"0",""
+"0","today_labeled <- today_labeled %>%"
+"0","  mutate(`Repeat Offender` = duplicated(today_labeled$`Name of Covered Entity`))"

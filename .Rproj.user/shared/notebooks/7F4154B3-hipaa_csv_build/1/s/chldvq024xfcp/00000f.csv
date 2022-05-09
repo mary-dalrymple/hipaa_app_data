@@ -1,0 +1,26 @@
+"0","yesterday_disclosed <- read_csv(""~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_disclosed_2022-04-16.csv"")"
+"1","[1mRows: [22m[34m857[39m [1mColumns: [22m[34m9[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (7): Name of Covered Entity, State, Covered Entity Type, Breach Submission Date, Type of Breach, Location of Breached Information, Business...
+[32mdbl[39m (1): Individuals Affected
+[33mlgl[39m (1): Web Description
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","yesterday_archived <- read_csv(""~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_archived_2022-04-16.csv"")"
+"1","[1mRows: [22m[34m3732[39m [1mColumns: [22m[34m9[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (8): Name of Covered Entity, State, Covered Entity Type, Breach Submission Date, Type of Breach, Location of Breached Information, Business...
+[32mdbl[39m (1): Individuals Affected
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","yesterday_all <- rbind(yesterday_disclosed, yesterday_archived)"

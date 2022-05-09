@@ -1,0 +1,15 @@
+"0","download_path = ""~/UMD/JOUR_628/hipaa_app/Data/0_Raw"""
+"0",""
+"0","fprof <- makeFirefoxProfile(list(browser.download.dir = download_path,"
+"0","                                 browser.download.folderList = 2L,"
+"0","                                 browser.download.manager.showWhenStarting = FALSE,"
+"0","                                 browser.helperApps.neverAsk.openFile = ""text/csv"","
+"0","                                 browser.helperApps.neverAsk.saveToDisk = ""text/csv"")"
+"0",")"
+"2","Warning in file(tmpfile, ""rb"") :"
+"2","
+ "
+"2"," cannot open file 'C:\Users\Mary\AppData\Local\Temp\RtmpclIuiJ\file33f4628f5116.zip': No such file or directory
+"
+"2","Error in file(tmpfile, ""rb"") : cannot open the connection
+"

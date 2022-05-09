@@ -1,0 +1,7 @@
+"0","# checkForServer()"
+"0",""
+"0","#Error: checkForServer is now defunct. Users in future can find the function"
+"0","#    in file.path(find.package(""RSelenium""), ""examples/serverUtils""). The"
+"0","#    recommended way to run a selenium server is via Docker. Alternatively"
+"0","#    see the RSelenium::rsDriver function."
+"0","    "

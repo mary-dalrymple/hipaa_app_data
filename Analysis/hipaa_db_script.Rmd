@@ -1,0 +1,302 @@
+---
+title: "HIPAA app data capture and cleaning"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+# Welcome
+
+This notebook contains the code and processes for ongoing capture, cleaning and updates of the database for a HIPAA patient disclosure reporting app.
+
+```{r}
+library("tidyverse")
+library("RSelenium")
+library("lubridate")
+```
+
+# Get the Data
+
+Source: https://ocrportal.hhs.gov/ocr/breach/breach_report.jsf
+
+The website defaults to the list of announced breaches (affecting more than 500 people) that haven't yet been resolved. In data terms, this means the field `Web Description` will be an empty string. This is also equivalent to a human clicking the "Under Investigation" button.
+
+To reach cases that have been resolved, a human would click the "Archived" button on the screen and the .jsf would generate a new report where `Web Description` contains data.
+
+RSelenium tutorial here :https://www.r-bloggers.com/2014/12/scraping-with-selenium/
+
+```{r}
+# checkForServer()
+
+#Error: checkForServer is now defunct. Users in future can find the function
+#    in file.path(find.package("RSelenium"), "examples/serverUtils"). The
+#    recommended way to run a selenium server is via Docker. Alternatively
+#    see the RSelenium::rsDriver function.
+    
+```
+
+Reference Material:
+
+https://stackoverflow.com/questions/60939970/using-r-to-web-scrape-data-from-javascripted-download-button
+http://joshuamccrain.com/tutorials/web_scraping_R_selenium.html
+
+```{r}
+driver = rsDriver(browser = c("firefox"))
+```
+
+Difference among the 4 button choices is the 'idt_36x' element.
+
+<a href="#" onclick="mojarra.jsfcljs(document.getElementById('ocrForm'),{'ocrForm:j_idt364':'ocrForm:j_idt364'},'');return false"><img id="ocrForm:j_idt365" src="/ocr/images/icons/csv.png;jsessionid=A36907FD4A20C5B4AC87280F379A9F5A?pfdrid_c=true" alt="CSV" title="Export as CSV" style="border-style: none" width="24"></a>
+
+
+```{r}
+remDr <- driver[["client"]]
+
+# navigate to website
+remDr$navigate("https://ocrportal.hhs.gov/ocr/breach/breach_report.jsf")
+```
+
+```{r}
+# get Under Investigation csv
+csv_button <- remDr$findElement(using = "id", value = "ocrForm:j_idt365")
+csv_button$clickElement()
+```
+
+Get and stash latest breach announcements file.
+
+```{r}
+# checking code to grab file directory information
+# file.info(dir('C:/Users/Mary/Downloads', full.names = TRUE))
+```
+
+```{r}
+latest_dl <- file.info(list.files("C:/Users/Mary/Downloads", full.names = T))
+breach_latest <- rownames(latest_dl)[which.max(latest_dl$mtime)]
+breach_latest
+```
+
+```{r}
+breach_latest_import <- read_csv(breach_latest)
+```
+
+Write out df with date.
+
+```{r}
+
+data_folder <- "~/UMD/JOUR_628/hipaa_app/Data/0_Raw/"
+
+write_csv(breach_latest_import, paste0(data_folder,"breaches_disclosed_",today(),".csv"))
+
+```
+
+
+Navigate to Archive
+
+<button id="ocrForm:j_idt24" name="ocrForm:j_idt24" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" onclick="PrimeFaces.bcn(this,event,[function(event){return doArchiveButtonClicked();},function(event){PrimeFaces.onPost();}]);" type="submit" role="button" aria-disabled="false"><span class="ui-button-text ui-c">Archive</span></button>
+
+```{r}
+archive_button <- remDr$findElement(using = "id", value = "ocrForm:j_idt24")
+archive_button$clickElement()
+
+# if I figure out how to set this up in GitHub actions, I'm going to have to insert some wait times.
+```
+
+Grab csv again
+
+<a href="#" onclick="mojarra.jsfcljs(document.getElementById('ocrForm'),{'ocrForm:j_idt364':'ocrForm:j_idt364'},'');return false"><img id="ocrForm:j_idt365" src="/ocr/images/icons/csv.png?pfdrid_c=true" alt="CSV" width="24" title="Export as CSV" style="border-style: none"></a>
+
+[referencing csv_button without specifying element again did not work]
+
+```{r}
+# get Archive csv
+csv_button <- remDr$findElement(using = "id", value = "ocrForm:j_idt365")
+csv_button$clickElement()
+```
+
+Now I have 2 csv's in the download folder by the name of `breach_report(n).csv`, where 'n' is an increment counter.
+
+Get latest download again
+
+```{r}
+latest_dl <- file.info(list.files("C:/Users/Mary/Downloads", full.names = T))
+breach_latest <- rownames(latest_dl)[which.max(latest_dl$mtime)]
+breach_latest
+```
+
+```{r}
+breach_latest_import <- read_csv(breach_latest)
+```
+
+```{r}
+write_csv(breach_latest_import, paste0(data_folder,"breaches_archived_",today(),".csv"))
+```
+
+```{r}
+# manually establishing combined file for base csv download
+# comment out when complete
+
+# bd16 <- read_csv('~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_disclosed_2022-04-16.csv')
+# ba16 <- read_csv('~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_archived_2022-04-16.csv')
+# breaches_all_20220416 <- rbind(bd16,ba16)
+# write_csv(breaches_all_20220416, paste0(data_folder,"breaches_all_2022-04-16.csv"))
+
+# Later, I copy and rename this file for 2022-04-22 to run 'yesterday' functions.
+```
+
+Combine into single df/csv
+
+```{r}
+
+disclosed <- read_csv(paste0(data_folder,"breaches_disclosed_",today(),".csv"))
+archived <- read_csv(paste0(data_folder,"breaches_archived_",today(),".csv"))
+today <- rbind(disclosed, archived)
+
+write_csv(today, paste0(data_folder,"breaches_all_",today(),'.csv'))
+```
+
+
+```{r}
+# If you miss a day, change the "-1" to "-2" or whatever's relevant to match your latest in the lookback
+
+yesterday <- read_csv(paste0(data_folder,"breaches_all_",today()-1,'.csv'))
+```
+
+```{r}
+new_or_updated <- setdiff(today, yesterday)
+```
+
+```{r}
+write_csv(new_or_updated, paste0(data_folder,"new_or_updated_breaches_",today(),'.csv'))
+```
+
+
+```{r}
+# convert date column
+# identify ransomware
+
+today_labeled <- today %>%
+  mutate(`Breach Submission Date` = as_date(`Breach Submission Date`, format = "%m/%d/%Y")) %>%
+  mutate("Ransomware" = str_detect(`Web Description`, "ransomware"))
+```
+
+
+```{r}
+
+# today_labeled <- today_labeled %>% 
+#   mutate("Penalty" = str_extract(`Web Description`, "\\$([0-9,.]+)"))
+
+
+today_labeled <- today_labeled %>%
+  mutate("Penalty" = case_when(str_detect(`Web Description`, "pay \\$([0-9,.]+) million") ~ str_extract(`Web Description`, "\\$([0-9,.]+) million"),
+                               (str_detect(`Web Description`, "pay \\$([0-9.,]+)")) ~ str_extract(`Web Description`, "\\$([0-9,]+)")))
+
+
+```
+
+
+```{r}
+# This marks TRUE starting with the second instance (or first repeat offense) of a Covered Entity.
+
+today_labeled <- today_labeled %>%
+  mutate(`Repeat Offender` = duplicated(today_labeled$`Name of Covered Entity`))
+```
+
+
+```{r}
+# create columns for very large breaches at 100k+, 1m+
+
+today_labeled <- today_labeled %>%
+  mutate(`10k+` = `Individuals Affected` >= 10000) %>%
+  mutate(`100k+` = `Individuals Affected` >= 100000) %>%
+  mutate (`1m+` = `Individuals Affected` >= 1000000)
+```
+
+Output labeled dataset
+
+```{r}
+
+write_csv(today_labeled, paste0(data_folder,"labeled_breaches_",today(),'.csv'))
+
+```
+
+
+# Reporting Resources
+
+The following resources link to databases maintained by states that provide public announcements of breaches in some format. Breaches reported here include all types, not just those disclosing personal health information. states require relevant health entities to report HIPAA breaches to OCR (reflected above).
+
+Note that some breaches will be reflected in multiple states' databases if a single breach effects residents in multiple states and state laws require state-specific disclosure.
+
+
+State-by-State list (Oct 2021):
+https://iapp.org/resources/article/u-s-state-data-breach-lists/
+
+
+State Breach Reporting (not necessarily more detail, data breaches beyond and including PHI)
+
+California
+template letter for mail merge
+https://oag.ca.gov/ecrime/databreach/reports/sb24-552740
+
+Delaware
+template letter for mail merge
+https://attorneygeneral.delaware.gov/fraud/cpu/securitybreachnotification/database/
+
+Hawaii
+template letter for mail merge
+https://cca.hawaii.gov/ocp/notices/security-breach/
+
+Indiana
+running table of year-to-date in pdf format; no letter
+https://www.in.gov/attorneygeneral/consumer-protection-division/id-theft-prevention/security-breaches/
+
+Maine
+more information than most, including submitter; includes template letter
+https://apps.web.maine.gov/online/aeviewer/ME/40/list.shtml
+
+Maryland
+*nothing since May 2021*
+https://www.marylandattorneygeneral.gov/Pages/IdentityTheft/breachnotices.aspx
+
+Massachusetts
+requires you to file a PIA request
+link takes you to a count of breaches and people affected (no entities; no itemization)
+https://www.mass.gov/lists/data-breach-reports
+
+New Hamphire
+Lookup by company name (Seriously.)
+companies alphabetical, dated, include link to template letter
+https://www.doj.nh.gov/consumer/security-breaches/index.htm
+
+New Jersey
+listed in blog format
+contains links to official (esp SEC and company) announcements -- handy for reference
+https://www.cyber.nj.gov/threat-center/public-data-breaches/
+
+North Dakota
+list with template letter (sort function wonky)
+https://attorneygeneral.nd.gov/consumer-resources/data-breach-notices
+
+Oklahoma
+a lot of on-screen narrative
+https://cybersecurity.ok.gov/breaches
+
+Oregon
+little info; sometimes separate breach | report | notification dates
+https://justice.oregon.gov/consumer/databreach/
+
+Texas
+no letters; number of Texans and date posted
+https://oagtx.force.com/datasecuritybreachreport/apex/DataSecurityReportsPage
+
+Vermont
+only notice letter templates (no table)
+https://ago.vermont.gov/data-security-breaches/
+
+Washington State
+extra narrative w/ sample template for mail merge
+https://www.atg.wa.gov/data-breach-notifications
+
+Wisconsin
+basics; not in table form
+https://datcp.wi.gov/Pages/Programs_Services/DataBreaches.aspx

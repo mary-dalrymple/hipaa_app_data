@@ -1,0 +1,2 @@
+"0","# checking code to grab file directory information"
+"0","# file.info(dir('C:/Users/Mary/Downloads', full.names = TRUE))"

@@ -1,0 +1,28 @@
+{
+    "id": "B1590789",
+    "path": "~/UMD/JOUR_628/hipaa_app/Analysis/hipaa_db_script.Rmd",
+    "project_path": "Analysis/hipaa_db_script.Rmd",
+    "type": "r_markdown",
+    "hash": "1187475198",
+    "contents": "",
+    "dirty": false,
+    "created": 1652105140609.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "chunk_output_type": "inline",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "300,25",
+        "scrollLine": "256"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1652062969,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1652062969,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,6 @@
+"0","# convert date column"
+"0","# identify ransomware"
+"0",""
+"0","today_labeled <- today %>%"
+"0","  mutate(`Breach Submission Date` = as_date(`Breach Submission Date`, format = ""%m/%d/%Y"")) %>%"
+"0","  mutate(""Ransomware"" = str_detect(`Web Description`, ""ransomware""))"

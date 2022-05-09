@@ -1,0 +1,4 @@
+"0","archive_button <- remDr$findElement(using = ""id"", value = ""ocrForm:j_idt24"")"
+"0","archive_button$clickElement()"
+"0",""
+"0","# if I figure out how to set this up in GitHub actions, I'm going to have to insert some wait times."

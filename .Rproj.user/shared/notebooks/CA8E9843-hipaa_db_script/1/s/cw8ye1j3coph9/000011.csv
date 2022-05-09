@@ -1,0 +1,14 @@
+"0","# If you miss a day, change the ""-1"" to ""-2"" or whatever's relevant to match your latest in the lookback"
+"0",""
+"0","yesterday <- read_csv(paste0(data_folder,""breaches_all_"",today()-1,'.csv'))"
+"1","[1mRows: [22m[34m4625[39m [1mColumns: [22m[34m9[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (8): Name of Covered Entity, State, Covered Entity Type, B...
+[32mdbl[39m (1): Individuals Affected
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"

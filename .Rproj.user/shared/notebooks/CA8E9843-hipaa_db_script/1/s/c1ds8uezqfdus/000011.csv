@@ -1,0 +1,6 @@
+"0","# create columns for very large breaches at 100k+, 1m+"
+"0",""
+"0","today_labeled <- today_labeled %>%"
+"0","  mutate(`10k+` = `Individuals Affected` >= 10000) %>%"
+"0","  mutate(`100k+` = `Individuals Affected` >= 100000) %>%"
+"0","  mutate (`1m+` = `Individuals Affected` >= 1000000)"

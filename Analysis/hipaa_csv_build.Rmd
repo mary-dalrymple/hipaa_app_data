@@ -1,0 +1,84 @@
+---
+title: "HIPAA CSV build"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+create today's df
+setdiff vs yesterday --> push as alert (new rows)
+setdiff on web description column
+
+Experimentation with setdiff to identify new rows / new data
+
+```{r}
+
+today <- read_csv('~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_disclosed_2022-04-23.csv')
+yesterday <- read_csv('~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_disclosed_2022-04-16.csv')
+
+```
+
+```{r}
+new_breaches <- setdiff(today, yesterday)
+new_breaches
+
+# magic!
+```
+make combined database for yesterday
+
+```{r}
+yesterday_disclosed <- read_csv("~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_disclosed_2022-04-16.csv")
+yesterday_archived <- read_csv("~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_archived_2022-04-16.csv")
+yesterday_all <- rbind(yesterday_disclosed, yesterday_archived)
+```
+
+```{r}
+today_disclosed <- read_csv("~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_disclosed_2022-04-23.csv")
+today_archived <- read_csv("~/UMD/JOUR_628/hipaa_app/Data/0_Raw/breaches_archived_2022-04-23.csv")
+today_all <- rbind(today_disclosed, today_archived)
+```
+
+```{r}
+new <- setdiff(today_all, yesterday_all)
+new
+```
+
+```{r}
+new_resolutions <- setdiff(today_all$`Web Description`, yesterday_all$`Web Description`)
+new_resolutions
+```
+
+```{r}
+setdiff(today_disclosed, yesterday_disclosed)
+```
+
+
+```{r}
+setdiff(yesterday_disclosed, today_disclosed)
+```
+
+```{r}
+setdiff <- setdiff(today_archived, yesterday_archived)
+
+```
+
+```{r}
+anti_join <- anti_join(today_all, yesterday_all)
+
+# matches count of setdiff
+```
+
+```{r}
+anti_join(anti_join, setdiff)
+```
+
+lubridate
+
+```{r}
+today()-1
+
+```
+

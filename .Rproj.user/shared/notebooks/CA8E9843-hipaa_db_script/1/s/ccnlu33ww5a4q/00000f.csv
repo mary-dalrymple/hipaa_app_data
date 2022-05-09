@@ -1,0 +1,4 @@
+"0","remDr <- driver[[""client""]]"
+"0",""
+"0","# navigate to website"
+"0","remDr$navigate(""https://ocrportal.hhs.gov/ocr/breach/breach_report.jsf"")"
